@@ -1,0 +1,18 @@
+using UnityEngine;
+
+public class Smooth : MonoBehaviour
+{
+    public Transform target;
+    public float smoothTime = 0.3f;   
+    private float velX = 0f;          
+    private float velZ = 0f;
+
+    void Update()
+    {
+        if (!target) return;
+        float newX = Mathf.SmoothDamp(transform.position.x, target.position.x, ref velX, smoothTime);
+        float newZ = Mathf.SmoothDamp(transform.position.z, target.position.z, ref velZ, smoothTime);
+
+        transform.position = new Vector3(newX, transform.position.y, newZ);
+    }
+}
