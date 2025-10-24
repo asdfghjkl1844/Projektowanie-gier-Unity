@@ -1,0 +1,21 @@
+using UnityEngine;
+
+public class MoveSideToSide : MonoBehaviour
+{
+    public float speed = 2f;
+    public float distance = 10f;
+    private float start;
+
+    void Start()
+    {
+        start = transform.position.x;
+    }
+
+    void Update()
+    {
+        float movement = Mathf.PingPong(Time.time * speed, distance);
+        Vector3 p = transform.position;
+        p.x = start + movement;
+        transform.position = p;
+    }
+}
