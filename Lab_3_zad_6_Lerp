@@ -1,0 +1,15 @@
+using UnityEngine;
+
+public class Lerp : MonoBehaviour
+{
+    public Transform target;
+    public float lerpSpeed = 6f;  
+    void Update()
+    {
+        if (!target) return;
+        Vector3 current = transform.position;
+        Vector3 desired = target.position;
+        desired.y = current.y; 
+        transform.position = Vector3.Lerp(current, desired, lerpSpeed * Time.deltaTime);
+    }
+}
