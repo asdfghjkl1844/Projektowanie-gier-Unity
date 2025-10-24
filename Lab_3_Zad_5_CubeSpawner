@@ -1,0 +1,44 @@
+using UnityEngine;
+using System.Collections.Generic;
+
+public class CubeSpawner : MonoBehaviour
+{
+    public GameObject cubePrefab;
+    public int cubeCount = 10;      
+    public float planeSize = 10f;   
+    public float cellSize = 1f;     
+
+    void Start()
+    {
+        if (cubePrefab == null)
+        {
+            Debug.LogError("Nie przypieto prefabu kostki");
+            return;
+        }
+
+        List<Vector2Int> gridPositions = new List<Vector2Int>();
+        int cellsPerSide = Mathf.FloorToInt(planeSize / cellSize);
+
+        for (int x = 0; x < cellsPerSide; x++)
+            for (int z = 0; z < cellsPerSide; z++)
+                gridPositions.Add(new Vector2Int(x, z));
+
+        for (int i = 0; i < gridPositions.Count; i++)
+        {
+            int j = Random.Range(i, gridPositions.Count);
+            (gridPositions[i], gridPositions[j]) = (gridPositions[j], gridPositions[i]);
+        }
+
+        for (int i = 0; i < cubeCount && i < gridPositions.Count; i++)
+        {
+            Vector2Int cell = gridPositions[i];
+
+            float offset = -planeSize / 2f + cellSize / 2f;
+            float worldX = offset + cell.x * cellSize;
+            float worldZ = offset + cell.y * cellSize;
+
+            Vector3 spawnPos = new Vector3(worldX, 0.5f, worldZ);
+            Instantiate(cubePrefab, spawnPos, Quaternion.identity);
+        }
+    }
+}
