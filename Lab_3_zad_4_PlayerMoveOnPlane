@@ -1,0 +1,52 @@
+using UnityEngine;
+
+[RequireComponent(typeof(Rigidbody))]
+public class PlayerMoveOnPlane : MonoBehaviour
+{
+    public float speed = 4f;                 
+
+    public Transform plane;                   
+    public float padding = 0.5f;              
+    private Rigidbody rb;
+    private float minX, maxX, minZ, maxZ;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+
+        if (plane != null)
+        {
+            float halfX = 5f * plane.localScale.x;  
+            float halfZ = 5f * plane.localScale.z; 
+
+            minX = plane.position.x - halfX + padding;
+            maxX = plane.position.x + halfX - padding;
+            minZ = plane.position.z - halfZ + padding;
+            maxZ = plane.position.z + halfZ - padding;
+        }
+        else
+        {
+            Debug.LogWarning("PlayerMoveOnPlane: nie przypieto plaszczyzny – ruch bez ograniczen.");
+        }
+    }
+
+    void FixedUpdate()
+    {
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+
+        Vector3 dir = new Vector3(h, 0f, v);
+        if (dir.sqrMagnitude > 1f) dir.Normalize();
+
+        Vector3 delta = dir * speed * Time.fixedDeltaTime;
+        Vector3 target = rb.position + delta;
+
+        if (plane != null)
+        {
+            target.x = Mathf.Clamp(target.x, minX, maxX);
+            target.z = Mathf.Clamp(target.z, minZ, maxZ);
+        }
+
+        rb.MovePosition(target);
+    }
+}
