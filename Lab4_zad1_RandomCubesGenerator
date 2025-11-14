@@ -1,0 +1,78 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+public class RandomCubesGenerator : MonoBehaviour
+{
+    List<Vector3> positions = new List<Vector3>();
+
+    public GameObject block;       
+    public int count = 10;          
+    public float delay = 1.0f;      
+    public Material[] materials;    
+
+    void Start()
+    {
+        MeshRenderer platformRenderer = GetComponent<MeshRenderer>();
+        Bounds plat = platformRenderer.bounds;
+
+        MeshRenderer blockRenderer = block.GetComponent<MeshRenderer>();
+        Bounds cube = blockRenderer.bounds;
+
+        float halfCubeX = cube.extents.x;
+        float halfCubeZ = cube.extents.z;
+        float halfCubeY = cube.extents.y;
+
+        float minX = plat.min.x + halfCubeX;
+        float maxX = plat.max.x - halfCubeX;
+        float minZ = plat.min.z + halfCubeZ;
+        float maxZ = plat.max.z - halfCubeZ;
+
+        float y = plat.max.y + halfCubeY;
+
+        if (count < 1) count = 1;
+
+        List<float> xs = new List<float>();
+        List<float> zs = new List<float>();
+
+        for (int i = 0; i < count; i++)
+        {
+            float x = UnityEngine.Random.Range(minX, maxX);
+            float z = UnityEngine.Random.Range(minZ, maxZ);
+
+            xs.Add(x);
+            zs.Add(z);
+        }
+
+        xs = xs.OrderBy(x => Guid.NewGuid()).ToList();
+        zs = zs.OrderBy(z => Guid.NewGuid()).ToList();
+
+        positions.Clear();
+        for (int i = 0; i < count; i++)
+        {
+            positions.Add(new Vector3(xs[i], y, zs[i]));
+        }
+
+        StartCoroutine(GenerujObiekt());
+    }
+
+    IEnumerator GenerujObiekt()
+    {
+        foreach (Vector3 pos in positions)
+        {
+            GameObject obj = Instantiate(block, pos, Quaternion.identity);
+
+            if (obj.TryGetComponent<Renderer>(out Renderer r))
+            {
+                if (materials != null && materials.Length > 0)
+                {
+                    r.material = materials[UnityEngine.Random.Range(0, materials.Length)];
+                }
+            }
+
+            yield return new WaitForSeconds(delay);
+        }
+    }
+}
