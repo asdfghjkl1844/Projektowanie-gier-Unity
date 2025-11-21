@@ -1,0 +1,55 @@
+using UnityEngine;
+
+public class HorizontalPlatform : MonoBehaviour
+{
+    public float speed = 2f;              
+    public Transform targetPoint;         
+    private Vector3 startPoint;           
+
+    private bool isMoving = false;        
+    private bool goingToTarget = true;     
+
+    private Transform oldParent = null;    
+
+    void Start()
+    {
+        startPoint = transform.position;   
+    }
+
+    void Update()
+    {
+        if (!isMoving) return;
+        Vector3 target = goingToTarget ? targetPoint.position : startPoint;
+        transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+        if (Vector3.Distance(transform.position, target) < 0.01f)
+        {
+            if (goingToTarget)
+            {
+                goingToTarget = false;   
+            }
+            else
+            {
+                goingToTarget = true;   
+                isMoving = false;       
+            }
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            oldParent = other.transform.parent;
+            other.transform.parent = transform;
+            isMoving = true; 
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            other.transform.parent = oldParent;
+        }
+    }
+}
