@@ -1,0 +1,32 @@
+using UnityEngine;
+
+public class SlidingDoorHorizontal : MonoBehaviour
+{
+    public Transform player;          
+    public float openDistance = 3f; 
+    public float slideAmount = 2f;   
+    public float speed = 2f;          
+
+    private Vector3 closedPosition;   
+    private Vector3 openPosition;    
+
+    void Start()
+    {
+        closedPosition = transform.position;
+        openPosition = closedPosition + transform.right * slideAmount;
+    }
+
+    void Update()
+    {
+        if (!player) return;
+        float distance = Vector3.Distance(player.position, transform.position);
+        bool shouldOpen = distance <= openDistance;
+
+        Vector3 target = shouldOpen ? openPosition : closedPosition;
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            target,
+            speed * Time.deltaTime
+        );
+    }
+}
