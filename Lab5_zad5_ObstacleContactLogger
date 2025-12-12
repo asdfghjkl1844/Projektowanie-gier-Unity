@@ -1,0 +1,12 @@
+using UnityEngine;
+
+public class ObstacleContactLogger : MonoBehaviour
+{
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.collider.CompareTag("Obstacle"))
+        {
+            Debug.Log("Player started contact with obstacle: " + hit.collider.name);
+        }
+    }
+}
